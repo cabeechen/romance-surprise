@@ -1,123 +1,67 @@
 "use client";
+import { useState, useEffect, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import useFireworks from "@/hooks/useFireworks"; // 你原本的煙火 hook
+import useTypewriter from "@/hooks/useTypewriter"; // 你原本的打字 hook
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
-
-// FileList -> 可預覽 URL
-const filesToUrls = (files) =>
-  Array.from(files || []).map((f) => ({
-    url: URL.createObjectURL(f),
-    name: f.name,
-    type: f.type || "",
-  }));
-
-// 打字機
-function useTypewriter(text, speed = 28, start = false) {
-  const [out, setOut] = useState("");
-  useEffect(() => {
-    if (!start) return;
-    setOut("");
-    let i = 0;
-    const id = setInterval(() => {
-      setOut((prev) => prev + text.charAt(i));
-      i++;
-      if (i >= text.length) clearInterval(id);
-    }, speed);
-    return () => clearInterval(id);
-  }, [text, speed, start]);
-  return out;
-}
-
-// 煙火
-function useFireworks() {
-  const canvasRef = useRef(null);
-  const rafRef = useRef();
-  const particles = useRef([]);
-  const spawn = (x, y) => {
-    const colors = ["#ffffff", "#ffd1dc", "#ffb3c1", "#ffe29f", "#c7e9ff"];
-    const n = 80;
-    for (let i = 0; i < n; i++) {
-      const angle = (Math.PI * 2 * i) / n + Math.random() * 0.5;
-      const speed = 2 + Math.random() * 4;
-      particles.current.push({
-        x,
-        y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        life: 60 + Math.random() * 30,
-        color: colors[Math.floor(Math.random() * colors.length)],
-      });
-    }
-  };
-  const launch = () => {
-    const c = canvasRef.current;
-    if (!c) return;
-    const { clientWidth: w, clientHeight: h } = c;
-    for (let k = 0; k < 3; k++) {
-      spawn(Math.random() * w * 0.8 + w * 0.1, Math.random() * h * 0.5 + h * 0.2);
-    }
-  };
-  useEffect(() => {
-    const c = canvasRef.current;
-    if (!c) return;
-    const ctx = c.getContext("2d");
-    const dpr = window.devicePixelRatio || 1;
-    const resize = () => {
-      c.width = c.clientWidth * dpr;
-      c.height = c.clientHeight * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    resize();
-    const onResize = () => resize();
-    window.addEventListener("resize", onResize);
-    const loop = () => {
-      const w = c.clientWidth, h = c.clientHeight;
-      ctx.clearRect(0, 0, w, h);
-      particles.current.forEach((p) => {
-        p.x += p.vx; p.y += p.vy; p.vy += 0.04; p.life -= 1;
-        ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = p.color; ctx.fill();
-      });
-      particles.current = particles.current.filter((p) => p.life > 0);
-      rafRef.current = requestAnimationFrame(loop);
-    };
-    loop();
-    return () => { cancelAnimationFrame(rafRef.current); window.removeEventListener("resize", onResize); };
-  }, []);
-  return { canvasRef, launch };
-}
+// 相簿路徑（放在 public/slides 裡）
+const SLIDES = [
+  "/slides/DSC08914.jpg",
+  "/slides/DSC08949.jpg",
+  "/slides/IMG_6730.jpg",
+  "/slides/IMG_6739.jpg",
+];
 
 export default function RomanceSurprisePage() {
+  // 密碼（兩個字）
   const PASSWORD = "1211";
   const [text, setText] = useState("");
   const [unlocked, setUnlocked] = useState(false);
 
+  // 煙火 + 打字機
   const { canvasRef, launch } = useFireworks();
   const [showMsg, setShowMsg] = useState(false);
-  const message =
-    "謝謝妳出現在我生命裡。上週的美式館、晚上的煙火，還有妳笑起來的樣子，" +
-    "都讓我更確定：把日常過成儀式，不需要理由，因為妳就是我想珍惜的理由。";
+ const message = `
+第一次見到妳的時候，我就有一種說不出的感覺
+我心裡想，如果之後妳的性格和想法跟我合，我一定會慢慢愛上妳
+在我們的聊天、爬山的相處裡，我越來越確定這一點
+所以我才選擇勇敢告訴妳，不想留下遺憾
+有時候因為緊張和害羞，我話不多，卻總覺得時間過得特別快
+跟妳相處的感覺，對我來說真的很特別
+我很想知道妳的想法，但妳不用急著回答
+我只是想讓妳知道，這是我真心的心意
+`;
+
+
+
   const typed = useTypewriter(message, 26, showMsg);
+
+  // 相簿自動出現
+  const [showSlides, setShowSlides] = useState(false);
+  useEffect(() => {
+    if (unlocked) {
+      // 延遲一點，等煙火打字先跑
+      const timer = setTimeout(() => setShowSlides(true), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [unlocked]);
 
   return (
     <div className="relative min-h-screen w-full text-white bg-gradient-to-b from-[#0b0b0f] via-[#0e0d14] to-[#14121c]">
-      {/* 背景效果 */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.10),transparent_60%)]" />
-      <div className="absolute inset-0 bg-black/40" />
-
-      {/* 煙火 */}
+      {/* 煙火背景 */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
 
-      {/* Hero / 密碼區 */}
+      {/* 內容 */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-16">
         <h1 className="text-center text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-sm">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-pink-200 to-white">
-            給妳的一個小驚喜
+            {unlocked ? "給妳的一個小驚喜" : "耐心看完"}
           </span>
         </h1>
 
+        {/* 未解鎖 */}
         {!unlocked ? (
           <div className="mx-auto mt-10 max-w-md">
             <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
@@ -136,22 +80,41 @@ export default function RomanceSurprisePage() {
                   onClick={() => {
                     if (text === PASSWORD) {
                       setUnlocked(true);
-                      setTimeout(() => { launch(); setShowMsg(true); }, 200);
+                      setTimeout(() => {
+                        launch();
+                        setShowMsg(true);
+                      }, 200);
                     }
                   }}
                 >
                   進入
                 </Button>
-                <p className="text-center text-xs text-white/60">（沒有提示喔，要想一想 😉）</p>
               </CardContent>
             </Card>
           </div>
         ) : (
-          <div className="mx-auto mt-10 max-w-3xl">
-            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 leading-8 shadow-xl border border-white/20">
-              <pre className="whitespace-pre-wrap font-sans text-base">{typed}</pre>
+          <>
+            {/* 打字訊息 */}
+            <div className="mx-auto mt-10 max-w-3xl">
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 leading-8 shadow-xl border border-white/20">
+                <pre className="whitespace-pre-wrap font-sans text-base">{typed}</pre>
+              </div>
             </div>
-          </div>
+
+            {/* 自動出現相簿 */}
+            {showSlides && (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-10">
+                {SLIDES.map((url, idx) => (
+                  <div
+                    key={idx}
+                    className="overflow-hidden rounded-2xl border border-white/10 shadow"
+                  >
+                    <img src={url} alt={`slide-${idx}`} className="w-full h-44 object-cover" />
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
