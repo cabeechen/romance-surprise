@@ -34,9 +34,7 @@ export default function RomanceSurprisePage() {
 我只是想讓妳知道，這是我真心的心意
 `;
 
-
-
-  const typed = useTypewriter(message, 26, showMsg);
+const typed = useTypewriter(message.trim(), 26, showMsg);
 
   // 相簿自動出現
   const [showSlides, setShowSlides] = useState(false);
