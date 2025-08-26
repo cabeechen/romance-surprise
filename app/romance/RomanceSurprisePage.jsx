@@ -9,11 +9,12 @@ import useTypewriter from "../../hooks/useTypewriter";
 
 // 相簿路徑（放在 public/slides 裡）
 const SLIDES = [
-  "/slides/DSC08914.jpg",
-  "/slides/DSC08949.jpg",
-  "/slides/IMG_6730.jpg",
-  "/slides/IMG_6739.jpg",
+  "/DSC08914.jpg",
+  "/DSC08949.jpg",
+  "/DSC08992.jpg",
+  "/DSC08995.jpg",
 ];
+
 
 export default function RomanceSurprisePage() {
   // 密碼（兩個字）
@@ -57,7 +58,7 @@ const typed = useTypewriter(message.trim(), 26, showMsg);
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-16">
         <h1 className="text-center text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-sm">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-pink-200 to-white">
-            {unlocked ? "給妳的一個小驚喜" : "耐心看完"}
+            {unlocked ? "給妳的一個小驚喜" : "想對妳說的話"}
           </span>
         </h1>
 
