@@ -13,6 +13,16 @@ const SLIDES = [
   "/DSC08949.jpg",
   "/DSC08992.jpg",
   "/DSC08995.jpg",
+  "/DSC08937.jpg",
+  "/DSC08938.jpg",
+  "/DSC08941.jpg",
+  "/DSC08980.jpg",
+  "/DSC08973.jpg",
+  "/DSC08939.jpg",
+  "/DSC08992.jpg",
+  "/DSC08959.jpg",
+  "/DSC08951.jpg",
+  "/DSC08957.jpg",
 ];
 
 
