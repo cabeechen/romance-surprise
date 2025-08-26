@@ -91,7 +91,7 @@ function useFireworks() {
 
 export default function RomanceSurprisePage() {
   // 密碼改為兩個字：生日
-  const PASSWORD = "生日";
+  const PASSWORD = "1211";
   const [text, setText] = useState("");
   const [unlocked, setUnlocked] = useState(false);
 
