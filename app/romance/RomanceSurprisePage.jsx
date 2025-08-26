@@ -65,7 +65,7 @@ const typed = useTypewriter(message.trim(), 26, showMsg);
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-16">
         <h1 className="text-center text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-sm">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-pink-200 to-white">
-            {unlocked ? "給妳的一個小驚喜" : "想對妳說的話"}
+            {unlocked ? "有時限的喔" : "想對妳說的話"}
           </span>
         </h1>
 
