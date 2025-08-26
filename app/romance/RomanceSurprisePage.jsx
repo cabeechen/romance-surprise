@@ -1,10 +1,11 @@
-"use client";
 import { useState, useEffect, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import useFireworks from "@/hooks/useFireworks"; // 你原本的煙火 hook
-import useTypewriter from "@/hooks/useTypewriter"; // 你原本的打字 hook
+
+// 改成相對路徑
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
+import useFireworks from "../../hooks/useFireworks";
+import useTypewriter from "../../hooks/useTypewriter";
 
 // 相簿路徑（放在 public/slides 裡）
 const SLIDES = [
@@ -20,10 +21,11 @@ export default function RomanceSurprisePage() {
   const [text, setText] = useState("");
   const [unlocked, setUnlocked] = useState(false);
 
-  // 煙火 + 打字機
-  const { canvasRef, launch } = useFireworks();
-  const [showMsg, setShowMsg] = useState(false);
- const message = `
+// 煙火 + 打字機
+const { canvasRef, launch } = useFireworks();
+const [showMsg, setShowMsg] = useState(false);
+
+const message = `
 第一次見到妳的時候，我就有一種說不出的感覺
 我心裡想，如果之後妳的性格和想法跟我合，我一定會慢慢愛上妳
 在我們的聊天、爬山的相處裡，我越來越確定這一點
