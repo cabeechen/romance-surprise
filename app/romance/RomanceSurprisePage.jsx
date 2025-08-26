@@ -90,26 +90,10 @@ function useFireworks() {
 }
 
 export default function RomanceSurprisePage() {
-  // 密碼改為兩個字：生日
   const PASSWORD = "1211";
   const [text, setText] = useState("");
   const [unlocked, setUnlocked] = useState(false);
 
-  // 背景媒體與輪播
-  const [bgMedia, setBgMedia] = useState([]);
-  const [bgIndex, setBgIndex] = useState(0);
-  const [autoPlay, setAutoPlay] = useState(true);
-  const currentBg = bgMedia[bgIndex];
-  useEffect(() => {
-    if (bgMedia.length === 0 || !autoPlay) return;
-    const id = setInterval(() => setBgIndex((i) => (i + 1) % bgMedia.length), 4000);
-    return () => clearInterval(id);
-  }, [bgMedia, autoPlay]);
-
-  // 相簿
-  const [gallery, setGallery] = useState([]);
-
-  // 煙火 + 打字機
   const { canvasRef, launch } = useFireworks();
   const [showMsg, setShowMsg] = useState(false);
   const message =
@@ -117,46 +101,14 @@ export default function RomanceSurprisePage() {
     "都讓我更確定：把日常過成儀式，不需要理由，因為妳就是我想珍惜的理由。";
   const typed = useTypewriter(message, 26, showMsg);
 
-  const bgStyle = useMemo(() => {
-    if (currentBg && currentBg.type?.startsWith("image")) {
-      return { backgroundImage: `url(${currentBg.url})` };
-    }
-    return {};
-  }, [currentBg]);
-
   return (
     <div className="relative min-h-screen w-full text-white bg-gradient-to-b from-[#0b0b0f] via-[#0e0d14] to-[#14121c]">
-      {/* 背景媒體 */}
-      {currentBg?.type?.startsWith("video") ? (
-        <video src={currentBg.url} className="absolute inset-0 w-full h-full object-cover opacity-60" autoPlay loop muted playsInline />
-      ) : (
-        <div className="absolute inset-0 bg-cover bg-center opacity-60" style={bgStyle} />
-      )}
+      {/* 背景效果 */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.10),transparent_60%)]" />
       <div className="absolute inset-0 bg-black/40" />
 
       {/* 煙火 */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
-
-      {/* 頂部工具列 */}
-      <div className="relative z-20 max-w-6xl mx-auto px-4 pt-6 flex items-center justify-between">
-        <div className="text-sm tracking-widest uppercase text-white/70">Night of Little Surprises</div>
-        <div className="flex items-center gap-3">
-          <label className="inline-flex">
-            <Input type="file" multiple accept="image/*,video/*" className="hidden" onChange={(e) => setBgMedia(filesToUrls(e.target.files))} />
-            <Button variant="secondary" className="rounded-xl">上傳背景媒體</Button>
-          </label>
-          <label className="inline-flex">
-            <Input type="file" multiple accept="image/*,video/*" className="hidden" onChange={(e) => setGallery(filesToUrls(e.target.files))} />
-            <Button variant="secondary" className="rounded-xl">上傳相簿</Button>
-          </label>
-          {bgMedia.length > 1 && (
-            <Button variant="outline" className="rounded-xl" onClick={() => setAutoPlay((v) => !v)}>
-              {autoPlay ? "暫停輪播" : "啟動輪播"}
-            </Button>
-          )}
-        </div>
-      </div>
 
       {/* Hero / 密碼區 */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-16">
@@ -199,27 +151,6 @@ export default function RomanceSurprisePage() {
             <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 leading-8 shadow-xl border border-white/20">
               <pre className="whitespace-pre-wrap font-sans text-base">{typed}</pre>
             </div>
-          </div>
-        )}
-      </div>
-
-      {/* 相簿 */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 pb-24">
-        <h2 className="text-xl mb-4 font-semibold text-white/90">我們的相簿 / 影片</h2>
-        {gallery.length === 0 ? (
-          <p className="text-white/70 text-sm">先用上方按鈕上傳一些照片或影片吧（美式館、煙火都可以）。</p>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {gallery.map((g, idx) => (
-              <div key={idx} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow transition-transform duration-200 hover:scale-[1.02]">
-                {g.type?.startsWith("video") ? (
-                  <video src={g.url} controls className="w-full h-44 object-cover" playsInline />
-                ) : (
-                  <img src={g.url} alt={g.name} className="w-full h-44 object-cover" />
-                )}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-            ))}
           </div>
         )}
       </div>
