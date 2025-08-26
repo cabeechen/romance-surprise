@@ -1,0 +1,15 @@
+node_modules/
+.next/
+.DS_Store
+.env
+.env.local
+.vercel
+npm-debug.log*
+yarn-error.log*
+# 大型媒體檔請勿放入 repo（請用上傳功能）
+*.mov
+*.MOV
+*.mp4
+*.MP4
+*.heic
+*.HEIC
