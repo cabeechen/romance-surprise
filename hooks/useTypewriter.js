@@ -1,19 +1,20 @@
-"use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export default function useTypewriter(text, speed = 50, active = true) {
-  const [display, setDisplay] = useState("");
+export default function useTypewriter(text = "", speed = 30, start = true) {
+  // ✅ 一開始就給空字串，避免 undefined
+  const [out, setOut] = useState("");
 
   useEffect(() => {
-    if (!active) return;
+    if (!start) return;
+    setOut(""); // 重新開始時先清空
     let i = 0;
-    const interval = setInterval(() => {
-      setDisplay((prev) => prev + text[i]);
+    const id = setInterval(() => {
       i++;
-      if (i >= text.length) clearInterval(interval);
+      setOut(text.slice(0, i));
+      if (i >= text.length) clearInterval(id);
     }, speed);
-    return () => clearInterval(interval);
-  }, [text, speed, active]);
+    return () => clearInterval(id);
+  }, [text, speed, start]);
 
-  return display;
+  return out; // ✅ 永遠回傳字串
 }
